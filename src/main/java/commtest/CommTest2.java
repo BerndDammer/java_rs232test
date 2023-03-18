@@ -1,7 +1,5 @@
 package commtest;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Duration;
 
@@ -14,7 +12,6 @@ public class CommTest2 implements SerialPortDataListener {
 	static SerialPort portId;
 	static String messageString = " ";
 	static OutputStream outputStream;
-	static InputStream inputStream;
 
 	public static void main(String[] args) {
 		new CommTest2();
@@ -26,12 +23,8 @@ public class CommTest2 implements SerialPortDataListener {
 		write();
 		try {
 			Thread.sleep(Duration.ofMillis(5000));
-			System.out.println("inputStream.available()   " + inputStream.available());
 
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		portId.closePort();
@@ -59,7 +52,6 @@ public class CommTest2 implements SerialPortDataListener {
 
 				serialPort.addDataListener(this);
 				outputStream = serialPort.getOutputStream();
-				inputStream = serialPort.getInputStream();
 
 				serialPort.openPort();
 
@@ -70,13 +62,8 @@ public class CommTest2 implements SerialPortDataListener {
 	}
 
 	private void write() {
-		try {
-			outputStream.write(messageString.getBytes());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		byte[] b = messageString.getBytes();
+		portId.writeBytes(b, b.length);
 	}
 
 	@Override
@@ -89,8 +76,7 @@ public class CommTest2 implements SerialPortDataListener {
 
 	@Override
 	public void serialEvent(SerialPortEvent event) {
-		System.out.println("\nEEEEEEEEEEEEEEEE VENT : " + event + "\n" );
-
+		System.out.println("\nEEEEEEEEEEEEEEEE VENT : " + event + "\n");
 		System.out.print(new String(event.getReceivedData()));
 	}
 }
